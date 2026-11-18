@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인스타팅 — 인스타 보고 시작하는 소개팅</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root{
+  --navy:#1F2A44;
+  --navy-soft:#334469;
+  --coral:#FF6F61;
+  --coral-soft:#FFE4E0;
+  --bg:#FAFAF7;
+  --card:#FFFFFF;
+  --line:#ECE9E2;
+  --text:#1F2A2E;
+  --text-dim:#767b83;
+  --blue:#3B82C4;
+  --green:#3FA66B;
+  --yellow:#FEE500;
+  --naver:#03C75A;
+  --shadow: 0 6px 20px rgba(31,42,68,0.08);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+  background:#E9E6DD;
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  min-height:100vh;
+}
+#frame{
+  width:420px;
+  min-height:100vh;
+  background:var(--bg);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 0 40px rgba(0,0,0,0.15);
+}
+.screen{
+  display:none;
+  flex-direction:column;
+  min-height:100vh;
+  padding-bottom:90px;
+  animation:fadeIn .25s ease;
+}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:18px 20px 10px;
+  position:sticky;top:0;background:var(--bg);z-index:5;
+}
+.topbar .back{
+  width:32px;height:32px;border-radius:50%;border:none;background:var(--card);
+  box-shadow:var(--shadow);cursor:pointer;font-size:16px;color:var(--navy);
+}
+.topbar h2{font-size:18px;margin:0;color:var(--navy);flex:1;}
+.icon-btn{
+  width:36px;height:36px;border-radius:50%;border:none;background:var(--card);
+  box-shadow:var(--shadow);cursor:pointer;font-size:16px;
+}
+
+.content{padding:0 20px;flex:1;}
+
+/* ---------- Login ---------- */
+#screen-login{justify-content:center;align-items:center;text-align:center;padding:40px 32px;}
+.logo-wrap{margin-bottom:60px;}
+.logo-mark{
+  width:76px;height:76px;border-radius:22px;margin:0 auto 18px;
+  box-shadow:var(--shadow);overflow:hidden;line-height:0;
+}
+.logo-mark svg{display:block;}
+.logo-wrap h1{color:var(--navy);font-size:30px;margin:0 0 8px;letter-spacing:1px;}
+.logo-wrap p{color:var(--text-dim);font-size:14px;margin:0;}
+.social-btns{width:100%;display:flex;flex-direction:column;gap:12px;}
+.btn{
+  width:100%;padding:15px;border-radius:14px;border:none;font-size:15px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-kakao{background:var(--yellow);color:#391B1B;}
+.btn-naver{background:var(--naver);color:#fff;}
+.btn-primary{background:var(--coral);color:#fff;}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--navy);}
+.btn-ghost{background:var(--navy-soft);color:#fff;opacity:.9}
+.fine-print{margin-top:22px;font-size:12px;color:var(--text-dim);}
+
+/* ---------- generic card / section ---------- */
+.card{
+  background:var(--card);border-radius:16px;box-shadow:var(--shadow);
+  padding:18px;margin-bottom:14px;
+}
+.section-title{font-size:13px;color:var(--text-dim);font-weight:600;margin:18px 0 8px;}
+label.field-label{display:block;font-size:13px;color:var(--navy);font-weight:600;margin:14px 0 6px;}
+input[type=text],input[type=number],input[type=email],textarea,select{
+  width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);
+  font-size:14px;font-family:inherit;background:#fff;color:var(--text);
+}
+textarea{resize:vertical;min-height:70px;}
+.help-text{font-size:12px;color:var(--text-dim);margin-top:6px;}
+.row{display:flex;gap:10px;}
+.row > *{flex:1;}
+
+/* chips */
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.chip{
+  padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:#fff;
+  font-size:13px;cursor:pointer;color:var(--text-dim);
+}
+.chip.selected{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* toggle checkbox rows */
+.consent-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);}
+.consent-row:last-child{border-bottom:none;}
+.consent-row span{font-size:14px;}
+.consent-row .tag-req{color:var(--coral);font-size:12px;margin-left:4px;}
+.switch{position:relative;width:42px;height:24px;flex:none;}
+.switch input{opacity:0;width:0;height:0;}
+.slider-sw{position:absolute;inset:0;background:var(--line);border-radius:24px;cursor:pointer;transition:.2s;}
+.slider-sw::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+.switch input:checked + .slider-sw{background:var(--coral);}
+.switch input:checked + .slider-sw::before{transform:translateX(18px);}
+
+.progress-wrap{background:var(--line);border-radius:10px;height:8px;overflow:hidden;margin:6px 0 2px;}
+.progress-bar{height:100%;background:var(--coral);border-radius:10px;transition:width .3s;}
+
+/* verification cards */
+.verify-card{display:flex;align-items:center;gap:12px;}
+.badge-icon{
+  width:46px;height:46px;border-radius:14px;flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;
+}
+.badge-navy{background:var(--navy);}
+.badge-blue{background:var(--blue);}
+.badge-green{background:var(--green);}
+.badge-coral{background:var(--coral);}
+.badge-instagram{background:linear-gradient(135deg,#FEDA75 0%,#FA7E1E 30%,#D62976 60%,#962FBF 85%,#4F5BD5 100%);}
+.ig-link-btn{background:linear-gradient(135deg,#FEDA75 0%,#FA7E1E 30%,#D62976 60%,#962FBF 85%,#4F5BD5 100%);color:#fff;border:none;}
+.verify-card .vinfo{flex:1;}
+.verify-card .vinfo h4{margin:0 0 3px;font-size:15px;}
+.status-pill{font-size:12px;padding:3px 9px;border-radius:20px;display:inline-block;}
+.status-done{background:#E4F3EA;color:var(--green);}
+.status-pending{background:#FFF3DC;color:#C98A1E;}
+.status-none{background:#F1EFEA;color:var(--text-dim);}
+.verify-card button{white-space:nowrap;}
+.mini-btn{
+  padding:8px 14px;border-radius:10px;border:none;background:var(--navy);color:#fff;
+  font-size:12.5px;cursor:pointer;font-weight:600;
+}
+
+/* tabs */
+.tabrow{display:flex;gap:6px;background:#F1EFEA;padding:4px;border-radius:12px;margin-bottom:16px;}
+.tabbtn{flex:1;padding:10px;border:none;border-radius:9px;background:transparent;font-size:13.5px;font-weight:600;color:var(--text-dim);cursor:pointer;}
+.tabbtn.active{background:#fff;color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,0.06);}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+.upload-box{
+  border:1.5px dashed var(--line);border-radius:14px;padding:26px 16px;text-align:center;
+  color:var(--text-dim);font-size:13px;cursor:pointer;background:#fff;
+}
+.radio-row{display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;}
+
+/* profile card (feed) */
+.profile-card{
+  background:var(--card);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;
+}
+.profile-photo{
+  height:320px;background-size:cover;background-position:center;position:relative;
+  display:flex;align-items:flex-end;
+}
+.profile-photo .grad{
+  position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,.55), transparent 55%);
+}
+.profile-photo .pinfo{position:relative;color:#fff;padding:18px;z-index:1;}
+.profile-photo .pinfo h3{margin:0 0 4px;font-size:21px;}
+.profile-photo .pinfo p{margin:0;font-size:13px;opacity:.9;}
+.ig-handle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 0;}
+.ig-handle-row .handle{font-size:13.5px;font-weight:700;color:var(--navy);}
+.ig-handle-row .followers{font-size:12px;color:var(--text-dim);}
+.ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin:10px 16px 0;border-radius:12px;overflow:hidden;}
+.ig-grid img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--line);}
+.badge-row{display:flex;gap:6px;padding:14px 16px;flex-wrap:wrap;}
+.mini-badge{
+  font-size:11.5px;padding:5px 10px;border-radius:20px;color:#fff;display:flex;align-items:center;gap:4px;font-weight:600;
+}
+.feed-actions{display:flex;gap:12px;padding:4px 16px 0;}
+.feed-actions button{
+  flex:1;padding:14px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;
+}
+.pass-btn{background:#fff;border:1.5px solid var(--line);color:var(--text-dim);}
+.like-btn{background:var(--coral);border:none;color:#fff;}
+
+/* bottom tab bar */
+.tabbar{
+  position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);
+  display:flex;padding:8px 6px calc(10px + env(safe-area-inset-bottom));z-index:10;
+}
+.tabbar .tbtn{
+  flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:11px;color:var(--text-dim);cursor:pointer;padding:6px 0;
+}
+.tabbar .tbtn.active{color:var(--coral);font-weight:700;}
+.tabbar .tbtn .ic{font-size:19px;}
+
+/* match success */
+#screen-match{justify-content:center;align-items:center;text-align:center;padding:40px 28px;}
+.match-photos{display:flex;gap:-10px;margin-bottom:26px;position:relative;height:150px;justify-content:center;}
+.match-photos img{width:130px;height:130px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:var(--shadow);}
+.match-photos img:first-child{margin-right:-30px;z-index:1;}
+#screen-match h2{color:var(--navy);font-size:24px;margin:0 0 10px;}
+#screen-match p{color:var(--text-dim);font-size:14px;margin:0 0 30px;}
+
+/* chat list */
+.chat-row{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+.chat-row img{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none;}
+.chat-row .cinfo{flex:1;min-width:0;}
+.chat-row .cinfo h4{margin:0 0 3px;font-size:14.5px;}
+.chat-row .cinfo p{margin:0;font-size:12.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-row .cmeta{text-align:right;font-size:11px;color:var(--text-dim);flex:none;}
+.unread-dot{background:var(--coral);color:#fff;border-radius:20px;font-size:10.5px;padding:2px 6px;display:inline-block;margin-top:4px;}
+
+/* chat room */
+#screen-chatroom .content{display:flex;flex-direction:column;padding:0;flex:1;}
+.chat-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--bg);}
+.chat-header img{width:36px;height:36px;border-radius:50%;object-fit:cover;}
+.chat-header h4{margin:0;font-size:15px;flex:1;}
+.chat-body{flex:1;padding:14px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+.guide-card{background:var(--coral-soft);border-radius:14px;padding:12px;font-size:12.5px;color:#9A3B2E;margin-bottom:4px;}
+.guide-card .sugg{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.guide-card .sugg span{background:#fff;border-radius:14px;padding:6px 10px;font-size:12px;cursor:pointer;color:var(--navy);}
+.warn-banner{background:#FFF3DC;color:#8A5A10;font-size:12px;padding:10px 12px;border-radius:12px;margin-bottom:6px;}
+.bubble{max-width:72%;padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.4;}
+.bubble.them{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px;}
+.bubble.me{background:var(--navy);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.chat-inputrow{display:flex;gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);background:#fff;}
+.chat-inputrow input{flex:1;border-radius:20px;}
+.img-btn-disabled{width:38px;height:38px;border-radius:50%;background:#F1EFEA;border:none;color:var(--text-dim);font-size:16px;flex:none;}
+.send-btn{width:38px;height:38px;border-radius:50%;background:var(--coral);border:none;color:#fff;font-size:15px;flex:none;}
+
+/* settings */
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line);}
+.settings-row:last-child{border-bottom:none;}
+.settings-row .label{font-size:14px;}
+.settings-row .sub{font-size:11.5px;color:var(--text-dim);margin-top:2px;}
+.link-row{padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer;display:flex;justify-content:space-between;color:var(--navy);}
+.link-row:last-child{border-bottom:none;}
+.danger-btn{width:100%;background:none;border:none;color:var(--coral);font-size:14px;font-weight:600;padding:18px 0;cursor:pointer;}
+
+/* bottom sheet */
+.sheet-backdrop{
+  position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none;
+}
+.sheet-backdrop.active{display:block;}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;
+  padding:20px 20px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);
+  transition:transform .25s ease;z-index:21;max-height:85%;overflow-y:auto;
+}
+.sheet.active{transform:translateY(0);}
+.sheet-handle{width:40px;height:4px;background:var(--line);border-radius:4px;margin:0 auto 16px;}
+.sheet h3{margin:0 0 16px;font-size:17px;color:var(--navy);}
+.range-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:4px;}
+.profile-mini{display:flex;flex-direction:column;gap:12px;}
+.like-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.like-tile{position:relative;border-radius:16px;overflow:hidden;height:170px;background-size:cover;background-position:center;box-shadow:var(--shadow);}
+.like-tile .lname{position:absolute;bottom:0;left:0;right:0;padding:10px;color:#fff;font-size:13px;font-weight:600;background:linear-gradient(to top, rgba(0,0,0,.6), transparent);}
+.toast{
+  position:absolute;bottom:100px;left:50%;transform:translateX(-50%);
+  background:var(--navy);color:#fff;padding:10px 18px;border-radius:30px;font-size:13px;
+  z-index:50;opacity:0;transition:opacity .25s;pointer-events:none;
+}
+.toast.show{opacity:1;}
+.empty-state{text-align:center;color:var(--text-dim);font-size:13px;padding:60px 20px;}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.photo-slot{aspect-ratio:1;border-radius:12px;border:1.5px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:22px;background:#fff;cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="frame">
+
+  <!-- ===== LOGIN ===== -->
+  <section id="screen-login" class="screen active">
+    <div class="logo-wrap">
+      <div class="logo-mark">
+        <svg viewBox="0 0 72 72" width="76" height="76" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="igGrad" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stop-color="#FEDA75"/><stop offset="30%" stop-color="#FA7E1E"/><stop offset="60%" stop-color="#D62976"/><stop offset="85%" stop-color="#962FBF"/><stop offset="100%" stop-color="#4F5BD5"/>
+          </linearGradient></defs>
+          <rect width="72" height="72" rx="20" fill="url(#igGrad)"/>
+          <path d="M36 55C21 44 13 35 13 25.5 13 17.5 19.3 12 27 12c4.4 0 8 2.4 9 6.3C37 14.4 40.6 12 45 12c7.7 0 14 5.5 14 13.5C59 35 51 44 36 55Z" fill="#fff"/>
+        </svg>
+      </div>
+      <h1>인스타팅</h1>
+      <p>인스타 보고 시작하는 진짜 소개팅</p>
+    </div>
+    <div class="social-btns">
+      <button class="btn btn-kakao" onclick="go('onboard-terms')">💬 카카오로 시작하기</button>
+      <button class="btn btn-naver" onclick="go('onboard-terms')">N 네이버로 시작하기</button>
+    </div>
+    <p class="fine-print">가입 시 만 19세 이상 본인확인이 필요합니다</p>
+  </section>
+
+  <!-- ===== ONBOARD: TERMS ===== -->
+  <section id="screen-onboard-terms" class="screen">
+    <div class="topbar"><button class="back" onclick="go('screen-login')">‹</button><h2>약관 동의</h2></div>
+    <div class="content">
+      <div class="card">
+        <div class="consent-row">
+          <span><b>모두 동의</b></span>
+          <label class="switch"><input type="checkbox" id="chk-all" onchange="toggleAll()"><span class="slider-sw"></span></label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="consent-row">
+          <span>서비스 이용약관<span class="tag-req">필수</span></span>
+          <label class="switch"><input type="checkbox" class="chk-req"><span class="slider-sw"></span></label>
+        </div>
+        <div class="consent-row">
+          <span>개인정보 처리방침<span class="tag-req">필수</span></span>
+          <label class="switch"><input type="checkbox" class="chk-req"><span class="slider-sw"></span></label>
+        </div>
+        <div class="consent-row">
+          <span>위치기반 서비스 이용약관<span class="tag-req">필수</span></span>
+          <label class="switch"><input type="checkbox" class="chk-req"><span class="slider-sw"></span></label>
+        </div>
+        <div class="consent-row">
+          <span>마케팅 정보 수신 동의<span style="color:var(--text-dim);font-size:12px;margin-left:4px;">선택</span></span>
+          <label class="switch"><input type="checkbox" class="chk-opt"><span class="slider-sw"></span></label>
+        </div>
+      </div>
+    </div>
+    <div class="content"><button class="btn btn-primary" onclick="go('screen-verify-intro')">다음</button></div>
+  </section>
+
+  <!-- ===== ONBOARD: VERIFY INTRO ===== -->
+  <section id="screen-verify-intro" class="screen">
+    <div class="topbar"><button class="back" onclick="go('screen-onboard-terms')">‹</button><h2>본인확인</h2></div>
+    <div class="content">
+      <div class="card" style="text-align:center;padding:30px 20px;">
+        <div class="badge-icon badge-navy" style="margin:0 auto 16px;">🛡️</div>
+        <h3 style="margin:0 0 10px;color:var(--navy);">휴대폰 본인확인</h3>
+        <p style="font-size:13.5px;color:var(--text-dim);line-height:1.6;">
+          휴대폰 본인확인으로 실명, 나이, 성별을 확인해요.<br>
+          확인된 정보는 가입 후 수정할 수 없어요.
+        </p>
+      </div>
+    </div>
+    <div class="content"><button class="btn btn-primary" onclick="verifyIdentity()">휴대폰 본인확인 하기</button></div>
+  </section>
+
+  <!-- ===== ONBOARD: PROFILE SETUP ===== -->
+  <section id="screen-profile-setup" class="screen">
+    <div class="topbar"><h2>프로필 설정</h2></div>
+    <div class="content">
+      <label class="field-label">사진 (2장 이상)</label>
+      <div class="photo-grid">
+        <div class="photo-slot">+</div><div class="photo-slot">+</div><div class="photo-slot">+</div>
+        <div class="photo-slot">+</div><div class="photo-slot">+</div><div class="photo-slot">+</div>
+      </div>
+
+      <label class="field-label">닉네임</label>
+      <input type="text" placeholder="닉네임을 입력하세요" value="수진">
+
+      <label class="field-label">인스타그램 아이디</label>
+      <input type="text" id="profile-ig" placeholder="@instagram_id" value="@sujin.log">
+      <p class="help-text">상대방이 내 실제 일상을 볼 수 있도록 연동할 계정이에요</p>
+
+      <label class="field-label">지역</label>
+      <div class="row">
+        <select><option>서울시</option><option>경기도</option><option>인천시</option></select>
+        <select><option>강남구</option><option>마포구</option><option>성동구</option></select>
+      </div>
+
+      <label class="field-label">키 (선택)</label>
+      <input type="number" placeholder="예: 165">
+
+      <label class="field-label">직군</label>
+      <select><option>IT·개발</option><option>금융</option><option>의료·제약</option><option>공공기관</option><option>교육</option><option>기타 전문직</option></select>
+
+      <label class="field-label">자기소개</label>
+      <textarea placeholder="나를 간단히 소개해보세요">주말엔 등산, 평일엔 커피 한 잔의 여유를 좋아해요.</textarea>
+
+      <label class="field-label">관심사</label>
+      <div class="chip-group" id="interest-chips">
+        <span class="chip" onclick="toggleChip(this)">여행</span>
+        <span class="chip" onclick="toggleChip(this)">러닝</span>
+        <span class="chip" onclick="toggleChip(this)">카페투어</span>
+        <span class="chip" onclick="toggleChip(this)">독서</span>
+        <span class="chip" onclick="toggleChip(this)">영화</span>
+        <span class="chip" onclick="toggleChip(this)">등산</span>
+        <span class="chip" onclick="toggleChip(this)">반려동물</span>
+        <span class="chip" onclick="toggleChip(this)">요리</span>
+      </div>
+
+      <div class="section-title">가치관 질문</div>
+      <div class="card">
+        <label class="field-label" style="margin-top:0;">연락은 얼마나 자주 하는 게 좋나요?</label>
+        <div class="chip-group"><span class="chip" onclick="toggleChip(this,true)">매일 조금씩</span><span class="chip" onclick="toggleChip(this,true)">필요할 때만</span><span class="chip" onclick="toggleChip(this,true)">만날 약속 위주</span></div>
+      </div>
+      <div class="card">
+        <label class="field-label" style="margin-top:0;">데이트 스타일은?</label>
+        <div class="chip-group"><span class="chip" onclick="toggleChip(this,true)">계획적으로</span><span class="chip" onclick="toggleChip(this,true)">즉흥적으로</span><span class="chip" onclick="toggleChip(this,true)">상대 맞춰서</span></div>
+      </div>
+      <div class="card">
+        <label class="field-label" style="margin-top:0;">결혼에 대한 생각은?</label>
+        <div class="chip-group"><span class="chip" onclick="toggleChip(this,true)">2~3년 내 희망</span><span class="chip" onclick="toggleChip(this,true)">천천히 생각</span><span class="chip" onclick="toggleChip(this,true)">비혼 지향</span></div>
+      </div>
+    </div>
+    <div class="content"><button class="btn btn-primary" onclick="finishOnboarding()">시작하기</button></div>
+  </section>
+
+  <!-- ===== MAIN: 오늘의 추천 ===== -->
+  <section id="screen-main" class="screen">
+    <div class="topbar">
+      <h2 style="color:var(--navy);">오늘의 추천 <span id="feed-count" style="color:var(--text-dim);font-size:13px;font-weight:400;">5명</span></h2>
+      <button class="icon-btn" onclick="openSheet('sheet-filter')">⚙️</button>
+    </div>
+    <div class="content" id="feed-area"></div>
+    <div class="tabbar">
+      <button class="tbtn active" data-tab="main" onclick="switchTab('main')"><span class="ic">🔥</span>추천</button>
+      <button class="tbtn" data-tab="likes" onclick="switchTab('likes')"><span class="ic">💌</span>받은 좋아요</button>
+      <button class="tbtn" data-tab="chats" onclick="switchTab('chats')"><span class="ic">💬</span>채팅</button>
+      <button class="tbtn" data-tab="me" onclick="switchTab('me')"><span class="ic">🙂</span>내 정보</button>
+    </div>
+  </section>
+
+  <!-- ===== 받은 좋아요 ===== -->
+  <section id="screen-likes" class="screen">
+    <div class="topbar"><h2>받은 좋아요</h2></div>
+    <div class="content">
+      <div class="like-grid" id="like-grid"></div>
+    </div>
+    <div class="tabbar">
+      <button class="tbtn" data-tab="main" onclick="switchTab('main')"><span class="ic">🔥</span>추천</button>
+      <button class="tbtn active" data-tab="likes" onclick="switchTab('likes')"><span class="ic">💌</span>받은 좋아요</button>
+      <button class="tbtn" data-tab="chats" onclick="switchTab('chats')"><span class="ic">💬</span>채팅</button>
+      <button class="tbtn" data-tab="me" onclick="switchTab('me')"><span class="ic">🙂</span>내 정보</button>
+    </div>
+  </section>
+
+  <!-- ===== 채팅 리스트 ===== -->
+  <section id="screen-chats" class="screen">
+    <div class="topbar"><h2>채팅</h2></div>
+    <div class="content" id="chat-list"></div>
+    <div class="tabbar">
+      <button class="tbtn" data-tab="main" onclick="switchTab('main')"><span class="ic">🔥</span>추천</button>
+      <button class="tbtn" data-tab="likes" onclick="switchTab('likes')"><span class="ic">💌</span>받은 좋아요</button>
+      <button class="tbtn active" data-tab="chats" onclick="switchTab('chats')"><span class="ic">💬</span>채팅</button>
+      <button class="tbtn" data-tab="me" onclick="switchTab('me')"><span class="ic">🙂</span>내 정보</button>
+    </div>
+  </section>
+
+  <!-- ===== 내 정보 ===== -->
+  <section id="screen-me" class="screen">
+    <div class="topbar"><h2>내 정보</h2></div>
+    <div class="content">
+      <div class="card" style="text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--navy-soft);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;">🙂</div>
+        <h3 style="margin:0 0 4px;">수진</h3>
+        <p style="color:var(--text-dim);font-size:13px;margin:0 0 12px;">서울 · 마포구 · @sujin.log</p>
+        <div class="badge-row" style="justify-content:center;padding:0;" id="me-badges"></div>
+      </div>
+      <div class="card link-row" onclick="go('screen-verify-center')">인증센터 바로가기 <span>›</span></div>
+      <div class="card link-row" onclick="go('screen-settings')">설정 <span>›</span></div>
+    </div>
+    <div class="tabbar">
+      <button class="tbtn" data-tab="main" onclick="switchTab('main')"><span class="ic">🔥</span>추천</button>
+      <button class="tbtn" data-tab="likes" onclick="switchTab('likes')"><span class="ic">💌</span>받은 좋아요</button>
+      <button class="tbtn" data-tab="chats" onclick="switchTab('chats')"><span class="ic">💬</span>채팅</button>
+      <button class="tbtn active" data-tab="me" onclick="switchTab('me')"><span class="ic">🙂</span>내 정보</button>
+    </div>
+  </section>
+
+  <!-- ===== 인증센터 ===== -->
+  <section id="screen-verify-center" class="screen">
+    <div class="topbar"><button class="back" onclick="go('screen-me')">‹</button><h2>인증센터</h2></div>
+    <div class="content">
+      <div class="card">
+        <div class="range-row"><span id="verify-progress-label">인증 1/3 완료</span></div>
+        <div class="progress-wrap"><div class="progress-bar" id="verify-progress-bar" style="width:33%;"></div></div>
+        <p class="help-text">인증할수록 더 많은 추천에 노출돼요</p>
+      </div>
+
+      <div class="card verify-card">
+        <div class="badge-icon badge-navy">🛡️</div>
+        <div class="vinfo"><h4>실명 인증</h4><span class="status-pill status-done" id="status-identity">완료</span></div>
+      </div>
+
+      <div class="card verify-card">
+        <div class="badge-icon badge-instagram">📸</div>
+        <div class="vinfo"><h4>인스타그램 연동</h4><span class="status-pill status-none" id="status-instagram">미인증</span></div>
+        <button class="mini-btn" id="btn-instagram" onclick="go('screen-ig-link')">연동하기</button>
+      </div>
+
+      <div class="card verify-card">
+        <div class="badge-icon badge-coral">📷</div>
+        <div class="vinfo"><h4>사진 인증</h4><span class="status-pill status-none" id="status-photo">미인증</span></div>
+        <button class="mini-btn" id="btn-photo" onclick="verifyPhoto()">셀카로 인증하기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 인스타그램 연동 ===== -->
+  <section id="screen-ig-link" class="screen">
+    <div class="topbar"><button class="back" onclick="go('screen-verify-center')">‹</button><h2>인스타그램 연동</h2></div>
+    <div class="content">
+      <div class="card" id="ig-before" style="text-align:center;padding:28px 20px;">
+        <div class="badge-icon badge-instagram" style="margin:0 auto 16px;">📸</div>
+        <h3 style="margin:0 0 10px;color:var(--navy);">인스타그램을 연동해보세요</h3>
+        <p style="font-size:13.5px;color:var(--text-dim);line-height:1.6;">
+          연동하면 상대방이 내 실제 일상을 미리 볼 수 있어요.<br>
+          가짜 프로필을 거르는 가장 확실한 방법이에요.
+        </p>
+        <button class="btn ig-link-btn" style="margin-top:18px;" onclick="connectInstagram()">📷 인스타그램으로 연동하기</button>
+      </div>
+
+      <div id="ig-after" style="display:none;">
+        <div class="card">
+          <div class="ig-handle-row" style="padding:0 0 0;">
+            <span class="handle" id="ig-handle-preview">@sujin.log</span>
+            <span class="followers" id="ig-followers-preview">팔로워 1,284명</span>
+          </div>
+          <div class="ig-grid" id="ig-grid-preview"></div>
+        </div>
+
+        <div class="section-title">공개 범위</div>
+        <div class="card">
+          <label class="radio-row"><input type="radio" name="ig-visibility" checked> 팔로워 수 공개</label>
+          <label class="radio-row"><input type="radio" name="ig-visibility"> 최근 게시물 3장만 공개</label>
+          <label class="radio-row"><input type="radio" name="ig-visibility"> 아이디만 공개</label>
+        </div>
+      </div>
+    </div>
+    <div class="content" id="ig-complete-wrap" style="display:none;">
+      <button class="btn btn-primary" onclick="completeInstagramVerify()">연동 완료하기</button>
+    </div>
+  </section>
+
+  <!-- ===== 매칭 성공 ===== -->
+  <section id="screen-match" class="screen">
+    <div class="match-photos">
+      <img src="https://i.pravatar.cc/200?img=47" alt="">
+      <img id="match-other-photo" src="https://i.pravatar.cc/200?img=12" alt="">
+    </div>
+    <h2>서로 좋아요를 눌렀어요!</h2>
+    <p id="match-other-name">지훈 님과 매칭되었어요</p>
+    <div class="social-btns">
+      <button class="btn btn-primary" onclick="startChatFromMatch()">대화 시작하기</button>
+      <button class="btn btn-outline" onclick="go('screen-main')">나중에</button>
+    </div>
+  </section>
+
+  <!-- ===== 채팅방 ===== -->
+  <section id="screen-chatroom" class="screen">
+    <div class="content">
+      <div class="chat-header">
+        <button class="back" onclick="switchTab('chats')" style="box-shadow:none;background:transparent;">‹</button>
+        <img id="room-avatar" src="https://i.pravatar.cc/100?img=12" alt="">
+        <h4 id="room-name">지훈</h4>
+        <button class="icon-btn" onclick="openSheet('sheet-report')" style="box-shadow:none;">⋮</button>
+      </div>
+      <div class="chat-body" id="chat-body">
+        <div class="guide-card">
+          💡 첫 대화가 어렵다면 이렇게 시작해보세요
+          <div class="sugg">
+            <span onclick="useSuggestion(this)">반가워요! 프로필 보니 등산 좋아하시네요 :)</span>
+            <span onclick="useSuggestion(this)">오늘 하루 어떠셨어요?</span>
+          </div>
+        </div>
+        <div class="warn-banner">⚠️ 상대가 외부 메신저, 계좌, 투자 이야기를 하면 주의하세요</div>
+      </div>
+      <div class="chat-inputrow">
+        <button class="img-btn-disabled" title="매칭 후 24시간 뒤부터 사진 전송 가능">📷</button>
+        <input type="text" id="chat-input" placeholder="메시지를 입력하세요" onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">↑</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 설정 ===== -->
+  <section id="screen-settings" class="screen">
+    <div class="topbar"><button class="back" onclick="go('screen-me')">‹</button><h2>설정</h2></div>
+    <div class="content">
+      <div class="section-title">안전과 개인정보</div>
+      <div class="card">
+        <div class="settings-row">
+          <div><div class="label">내 인스타 팔로워에게 숨기기</div><div class="sub">연동한 계정의 팔로워에게 내 프로필이 보이지 않아요</div></div>
+          <label class="switch"><input type="checkbox" checked><span class="slider-sw"></span></label>
+        </div>
+        <div class="settings-row">
+          <div><div class="label">연락처에 있는 지인 숨기기</div><div class="sub">연락처는 서버로 전송되지 않아요</div></div>
+          <label class="switch"><input type="checkbox"><span class="slider-sw"></span></label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="link-row" onclick="toast('차단 목록 (데모)')">차단 목록 <span>›</span></div>
+        <div class="link-row" onclick="toast('신고 내역 (데모)')">신고 내역 <span>›</span></div>
+        <div class="link-row" onclick="toast('첫 만남 안전 수칙 (데모)')">첫 만남 안전 수칙 <span>›</span></div>
+      </div>
+      <button class="danger-btn" onclick="openSheet('sheet-delete')">계정 삭제</button>
+    </div>
+  </section>
+
+  <!-- ===== SHEETS ===== -->
+  <div class="sheet-backdrop" id="backdrop" onclick="closeSheets()"></div>
+
+  <div class="sheet" id="sheet-filter">
+    <div class="sheet-handle"></div>
+    <h3>필터</h3>
+    <label class="field-label" style="margin-top:0;">나이</label>
+    <div class="row">
+      <input type="number" value="28" id="age-min"><span style="align-self:center;">~</span><input type="number" value="38" id="age-max">
+    </div>
+    <label class="field-label">지역</label>
+    <div class="chip-group">
+      <span class="chip selected" onclick="toggleChip(this)">서울 전체</span>
+      <span class="chip" onclick="toggleChip(this)">강남구</span>
+      <span class="chip" onclick="toggleChip(this)">마포구</span>
+      <span class="chip" onclick="toggleChip(this)">경기 남부</span>
+    </div>
+    <label class="field-label">인증 필터</label>
+    <div class="card" style="padding:4px 18px;">
+      <div class="consent-row"><span>인스타 연동된 사람만</span><label class="switch"><input type="checkbox" id="f-instagram"><span class="slider-sw"></span></label></div>
+      <div class="consent-row"><span>사진 인증된 사람만</span><label class="switch"><input type="checkbox" id="f-photo"><span class="slider-sw"></span></label></div>
+      <div class="consent-row"><span>팔로워 1,000명 이상</span><label class="switch"><input type="checkbox" id="f-followers"><span class="slider-sw"></span></label></div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="applyFilter()">적용하기</button>
+  </div>
+
+  <div class="sheet" id="sheet-report">
+    <div class="sheet-handle"></div>
+    <h3>신고하기</h3>
+    <div class="radio-row"><input type="radio" name="report-reason" checked> 외부 메신저·연락처 유도</div>
+    <div class="radio-row"><input type="radio" name="report-reason"> 금전·투자 요구</div>
+    <div class="radio-row"><input type="radio" name="report-reason"> 부적절한 사진·발언</div>
+    <div class="radio-row"><input type="radio" name="report-reason"> 허위 프로필</div>
+    <textarea placeholder="상세 내용을 입력해주세요 (선택)" style="margin-top:8px;"></textarea>
+    <button class="btn btn-primary" style="margin-top:14px;" onclick="submitReport()">제출하기</button>
+  </div>
+
+  <div class="sheet" id="sheet-delete">
+    <div class="sheet-handle"></div>
+    <h3>계정을 삭제할까요?</h3>
+    <p class="help-text" style="font-size:13px;margin-bottom:16px;">삭제하면 매칭, 대화 내역이 모두 사라지고 되돌릴 수 없어요.</p>
+    <button class="btn" style="background:var(--coral);color:#fff;" onclick="toast('데모에서는 삭제되지 않아요')">삭제할래요</button>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="closeSheets()">취소</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ---------------- state ---------------- */
+const state = {
+  verify: { identity:true, instagram:false, photo:false },
+  feedIdx: 0,
+  matchedWith: null,
+  chats: {},
+};
+
+const PEOPLE = [
+  {id:1, name:'지훈', age:31, region:'서울 · 강남구', ig:'@jihoon.daily', followers:1840, photo:'https://picsum.photos/seed/p1main/500/650', badges:['instagram','photo']},
+  {id:2, name:'민서', age:29, region:'서울 · 마포구', ig:'@minseo.log', followers:3260, photo:'https://picsum.photos/seed/p2main/500/650', badges:['instagram','photo']},
+  {id:3, name:'태오', age:33, region:'경기 · 분당구', ig:'@taeo.daily', followers:512, photo:'https://picsum.photos/seed/p3main/500/650', badges:['instagram']},
+  {id:4, name:'하은', age:28, region:'서울 · 성동구', ig:'@haeun.view', followers:2190, photo:'https://picsum.photos/seed/p4main/500/650', badges:['photo']},
+  {id:5, name:'준영', age:34, region:'서울 · 강남구', ig:'@junyoung.o', followers:4820, photo:'https://picsum.photos/seed/p5main/500/650', badges:['instagram','photo']},
+];
+const LIKED_ME = [
+  {id:6, name:'서아', photo:'https://i.pravatar.cc/400?img=44'},
+  {id:7, name:'도윤', photo:'https://i.pravatar.cc/400?img=60'},
+];
+const BADGE_META = {
+  identity:{label:'실명인증', cls:'badge-navy'},
+  instagram:{label:'인스타 연동', cls:'badge-instagram'},
+  photo:{label:'사진인증', cls:'badge-coral'},
+};
+function igGridHTML(seedBase){
+  return `<div class="ig-grid">${Array.from({length:9}).map((_,i)=>`<img src="https://picsum.photos/seed/${seedBase}-${i}/150/150" loading="lazy">`).join('')}</div>`;
+}
+
+/* ---------------- navigation ---------------- */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id.startsWith('screen-')?id:'screen-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function switchTab(tab){
+  go('screen-'+tab);
+  if(tab==='likes') renderLikes();
+  if(tab==='chats') renderChatList();
+  if(tab==='me') renderMeBadges();
+}
+
+/* ---------------- toast ---------------- */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+/* ---------------- onboarding ---------------- */
+function toggleAll(){
+  const checked = document.getElementById('chk-all').checked;
+  document.querySelectorAll('.chk-req,.chk-opt').forEach(c=>c.checked=checked);
+}
+function verifyIdentity(){
+  toast('본인확인이 완료되었어요');
+  setTimeout(()=>go('screen-profile-setup'), 500);
+}
+function toggleChip(el, single){
+  if(single){
+    el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  }
+  el.classList.toggle('selected');
+}
+function finishOnboarding(){
+  state.verify.identity = true;
+  toast('인스타팅에 오신 걸 환영해요!');
+  setTimeout(()=>{ go('screen-main'); renderFeed(); }, 500);
+}
+
+/* ---------------- verify center ---------------- */
+function updateVerifyUI(){
+  const v = state.verify;
+  const done = Object.values(v).filter(Boolean).length;
+  document.getElementById('verify-progress-label').textContent = `인증 ${done}/3 완료`;
+  document.getElementById('verify-progress-bar').style.width = (done/3*100)+'%';
+
+  setStatus('status-instagram', v.instagram, '완료','미인증');
+  setStatus('status-photo', v.photo, '완료','미인증');
+  document.getElementById('btn-instagram').style.display = v.instagram? 'none':'inline-block';
+  document.getElementById('btn-photo').style.display = v.photo? 'none':'inline-block';
+}
+function setStatus(elId, isDone, doneText, noneText){
+  const el = document.getElementById(elId);
+  el.textContent = isDone? doneText : noneText;
+  el.className = 'status-pill ' + (isDone? 'status-done' : 'status-none');
+}
+function verifyPhoto(){
+  state.verify.photo = true;
+  toast('사진 인증이 완료되었어요');
+  updateVerifyUI();
+}
+function connectInstagram(){
+  const handle = (document.getElementById('profile-ig')?.value || '@sujin.log').trim() || '@sujin.log';
+  const followers = Math.floor(400 + Math.random()*4000);
+  document.getElementById('ig-handle-preview').textContent = handle;
+  document.getElementById('ig-followers-preview').textContent = `팔로워 ${followers.toLocaleString()}명`;
+  document.getElementById('ig-grid-preview').innerHTML = Array.from({length:9}).map((_,i)=>`<img src="https://picsum.photos/seed/me-${i}/150/150" loading="lazy">`).join('');
+  document.getElementById('ig-before').style.display = 'none';
+  document.getElementById('ig-after').style.display = 'block';
+  document.getElementById('ig-complete-wrap').style.display = 'block';
+  toast('인스타그램 계정이 연동되었어요');
+}
+function completeInstagramVerify(){
+  state.verify.instagram = true;
+  toast('인스타그램 연동이 완료됐어요');
+  updateVerifyUI();
+  go('screen-verify-center');
+}
+
+/* ---------------- feed ---------------- */
+function renderFeed(){
+  const area = document.getElementById('feed-area');
+  const remaining = PEOPLE.length - state.feedIdx;
+  document.getElementById('feed-count').textContent = Math.max(remaining,0)+'명';
+  if(state.feedIdx >= PEOPLE.length){
+    area.innerHTML = `<div class="empty-state">🎉 오늘의 추천을 모두 확인했어요<br>내일 다시 찾아와주세요</div>`;
+    return;
+  }
+  const p = PEOPLE[state.feedIdx];
+  area.innerHTML = `
+    <div class="profile-card">
+      <div class="profile-photo" style="background-image:url('${p.photo}')">
+        <div class="grad"></div>
+        <div class="pinfo"><h3>${p.name}, ${p.age}</h3><p>${p.region}</p></div>
+      </div>
+      <div class="ig-handle-row"><span class="handle">${p.ig}</span><span class="followers">팔로워 ${p.followers.toLocaleString()}명</span></div>
+      ${igGridHTML('p'+p.id)}
+      <div class="badge-row">${p.badges.map(b=>`<span class="mini-badge ${BADGE_META[b].cls}">${BADGE_META[b].label}</span>`).join('')}</div>
+      <div class="feed-actions">
+        <button class="pass-btn" onclick="passPerson()">패스</button>
+        <button class="like-btn" onclick="likePerson(${p.id})">좋아요</button>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+  `;
+}
+function passPerson(){
+  state.feedIdx++;
+  renderFeed();
+}
+function likePerson(id){
+  const p = PEOPLE.find(x=>x.id===id);
+  state.feedIdx++;
+  // mock mutual match for even ids
+  if(id % 2 === 0){
+    state.matchedWith = p;
+    document.getElementById('match-other-photo').src = p.photo;
+    document.getElementById('match-other-name').textContent = `${p.name} 님과 매칭되었어요`;
+    go('screen-match');
+  } else {
+    toast('좋아요를 보냈어요');
+    renderFeed();
+  }
+}
+
+/* ---------------- filter ---------------- */
+function openSheet(id){
+  document.getElementById('backdrop').classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function closeSheets(){
+  document.getElementById('backdrop').classList.remove('active');
+  document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('active'));
+}
+function applyFilter(){
+  const onlyInstagram = document.getElementById('f-instagram').checked;
+  const onlyPhoto = document.getElementById('f-photo').checked;
+  const onlyBigFollowers = document.getElementById('f-followers').checked;
+  let filtered = PEOPLE.filter(p=>
+    (!onlyInstagram || p.badges.includes('instagram')) &&
+    (!onlyPhoto || p.badges.includes('photo')) &&
+    (!onlyBigFollowers || p.followers>=1000)
+  );
+  state.feedIdx = 0;
+  // reorder PEOPLE temporarily for demo: put filtered first
+  PEOPLE.sort((a,b)=> (filtered.includes(b)?1:0) - (filtered.includes(a)?1:0) ? (filtered.includes(a)?-1:1) : 0);
+  closeSheets();
+  toast('필터가 적용되었어요');
+  renderFeed();
+}
+
+/* ---------------- likes / chats ---------------- */
+function renderLikes(){
+  const grid = document.getElementById('like-grid');
+  grid.innerHTML = LIKED_ME.map(p=>`
+    <div class="like-tile" style="background-image:url('${p.photo}')" onclick="matchFromLikes(${p.id})">
+      <div class="lname">${p.name}</div>
+    </div>`).join('');
+}
+function matchFromLikes(id){
+  const p = LIKED_ME.find(x=>x.id===id);
+  state.matchedWith = p;
+  document.getElementById('match-other-photo').src = p.photo;
+  document.getElementById('match-other-name').textContent = `${p.name} 님과 매칭되었어요`;
+  go('screen-match');
+}
+function renderChatList(){
+  const list = document.getElementById('chat-list');
+  const entries = Object.values(state.chats);
+  if(entries.length===0){
+    list.innerHTML = `<div class="empty-state">아직 매칭된 대화가 없어요<br>오늘의 추천에서 좋아요를 보내보세요</div>`;
+    return;
+  }
+  list.innerHTML = entries.map(c=>`
+    <div class="chat-row" onclick="openChat(${c.id})">
+      <img src="${c.photo}">
+      <div class="cinfo"><h4>${c.name}</h4><p>${c.last}</p></div>
+      <div class="cmeta">방금</div>
+    </div>`).join('');
+}
+function startChatFromMatch(){
+  const p = state.matchedWith;
+  if(!state.chats[p.id]){
+    state.chats[p.id] = {id:p.id, name:p.name, photo:p.photo, last:'매칭을 축하해요! 대화를 시작해보세요 :)', messages:[]};
+  }
+  openChat(p.id);
+}
+function openChat(id){
+  const c = state.chats[id];
+  document.getElementById('room-avatar').src = c.photo;
+  document.getElementById('room-name').textContent = c.name;
+  const body = document.getElementById('chat-body');
+  body.querySelectorAll('.bubble').forEach(b=>b.remove());
+  c.messages.forEach(m=>{
+    const b = document.createElement('div');
+    b.className = 'bubble ' + m.from;
+    b.textContent = m.text;
+    body.appendChild(b);
+  });
+  go('screen-chatroom');
+  window._currentChat = id;
+  body.scrollTop = body.scrollHeight;
+}
+function useSuggestion(el){
+  document.getElementById('chat-input').value = el.textContent;
+}
+function sendMessage(){
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  const c = state.chats[window._currentChat];
+  c.messages.push({from:'me', text});
+  c.last = text;
+  const body = document.getElementById('chat-body');
+  const b = document.createElement('div');
+  b.className = 'bubble me';
+  b.textContent = text;
+  body.appendChild(b);
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+}
+
+/* ---------------- me / settings ---------------- */
+function renderMeBadges(){
+  const el = document.getElementById('me-badges');
+  const v = state.verify;
+  el.innerHTML = Object.keys(v).filter(k=>v[k]).map(k=>
+    `<span class="mini-badge ${BADGE_META[k].cls}">${BADGE_META[k].label}</span>`
+  ).join('') || '<span class="help-text">아직 완료된 인증이 없어요</span>';
+}
+function submitReport(){
+  closeSheets();
+  toast('신고가 접수되었어요');
+}
+
+updateVerifyUI();
+</script>
+</body>
+</html>
